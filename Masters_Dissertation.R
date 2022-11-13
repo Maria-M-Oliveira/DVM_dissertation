@@ -6,16 +6,16 @@ library(ggforce)
 library(grid)
 library(readxl)
 
-Temp <- read_excel("DB.xlsx", sheet="Temperaturas")%>%
+Temp <- read_excel("DB_Limpo.xlsx", sheet="Temperaturas")%>%
   as.data.frame() %>% 
   rename(temperatura=`Temperatura Receção Logística (ºC)`)
 
-Hum <- read_excel("DB.xlsx", sheet="HumidadeBSS")%>%
+Hum <- read_excel("DB_Limpo.xlsx", sheet="HumidadeBSS")%>%
   as.data.frame() %>% 
   rename(hum = `Humidade (%)`,
          conf = `Conformidade legal`)
 
-NC <- read_excel("DB.xlsx", sheet="NC_Rececao") %>%
+NC <- read_excel("DB_Limpo.xlsx", sheet="NC_Rececao") %>%
   as.data.frame() %>% 
   rename(razao= `Razão Não Conformidade`,
          tipo = `Tipo Não Conformidade`,
