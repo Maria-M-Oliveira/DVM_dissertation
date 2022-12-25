@@ -6,61 +6,32 @@
 # Usar outra library
 library(rgee)
 library(googledrive)
+library(sf)
 
 rgee::ee_Initialize(user = 'oliveira.maria.miguel@gmail.com', drive = TRUE, gcs = FALSE)
-ee_install_upgrade()
 
-ee_users()
+nc <- st_read(system.file("shape/nc.shp", package = "sf")) %>%
+  st_transform(4326) %>%
+  sf_as_ee()
 
-images  <- ee$ImageCollection("ECMWF/ERA5/DAILY")$
-  filterDate("2017-01-01", "2018-01-31")$
-  select("mean_2m_air_temperature")
+ee_s2 <- ee$ImageCollection("ECMWF/ERA5/DAILY")$
+  filterDate("2016-01-01", "2016-01-31")$
+  filterBounds(nc)
 
-images <- images$map(function(i) i$unmask(-1))
-array <- images$toArray()
-bandNames <- images$aggregate_array("system:index")
-image <- array$arrayProject(list(0))$arrayFlatten(list(bandNames))
+ee_s2 <- ee$ImageCollection(ee_s2$toList(2))
 
-print(image$getInfo())
+Map$centerObject(nc$geometry())
+m5 <- Map$addLayers(
+  ee_s2$filterDate("2016-01-03"),
+  visParams
+  )
+m5
 
-bandNames <- image$bandNames()
-print(bandNames$getInfo())
+visParams <- list(
+  min = 250,
+  max = 320,
+  palette = c('#000080', '#0000D9', '#4000FF', '#8000FF', '#0080FF', '#00FFFF', '#00FF80',
+    '#80FF00', '#DAFF00', '#FFFF00', '#FFF500', '#FFDA00', '#FFB000', '#FFA400',
+    '#FF4F00', '#FF2500', '#FF0A00', '#FF00FF')
+  )
 
-addTime <- function(image) {
-  return(image$addBands(image$metadata("system:time_start")))
-}
-
-conditional <- function(image) {
-  return(ee$Algorithms$If(
-    ee$Number(image$get("SUN_ELEVATION"))$gt(40),
-    image,
-    ee$Image(0)
-  ))
-}
-
-collection <- ee$ImageCollection("LANDSAT/LC08/C01/T1_TOA")$
-  filter(ee$Filter$eq("WRS_PATH", 44))$
-  filter(ee$Filter$eq("WRS_ROW", 34))
-
-print(collection$map(addTime)$getInfo())
-
-collection <- ee$ImageCollection("LANDSAT/LC8_L1T_TOA")$
-  filter(ee$Filter$eq("WRS_PATH", 44))$
-  filter(ee$Filter$eq("WRS_ROW", 34))
-
-
-print(collection$map(conditional)$getInfo())
-
-
-viz <- list(
-  max = 4000,
-  min = 0,
-  palette = c("#000000","#5AAD5A","#A9AD84","#FFFFFF")
-)
-
-rgee::Map$addLayers(
-  eeObject = images,
-  # visParams =  viz,
-  name = 'SRTM',
-  # legend = TRUE
-)
