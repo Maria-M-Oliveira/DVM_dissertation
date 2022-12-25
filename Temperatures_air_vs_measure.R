@@ -1,37 +1,32 @@
-# library(weatherData)
-# weatherdata package is currently not working (: need to try another
-# getWeatherForDate(station_id = "LPPT" ,"2022-01-02", end_date = "2022-03-01")
-
-
-# Usar outra library
 library(rgee)
 library(googledrive)
 library(sf)
 
-rgee::ee_Initialize(user = 'oliveira.maria.miguel@gmail.com', drive = TRUE, gcs = FALSE)
+# Library a usar para earth engine= rgee
+# Guia instalacao - https://github.com/r-spatial/rgee
+# Mas da alguns problemas
+# Solucoes para alguns que encontrei:
+#  1 - instalar o google earth engine no conda - https://developers.google.com/earth-engine/guides/python_install-conda#windows_5
+#  2-  conda a pedir o OpenSSL - https://github.com/conda/conda/issues/11795
+#  3 - conda nao encontra gcloud instalado - https://gis.stackexchange.com/questions/445457/gcloud-command-not-found-when-authenticating-google-earth-engine
+#  4 - R nao encontra credenciais/gcloud - https://github.com/r-spatial/rgee/issues/269#issuecomment-1246880456
 
-nc <- st_read(system.file("shape/nc.shp", package = "sf")) %>%
-  st_transform(4326) %>%
-  sf_as_ee()
+rgee::ee_Initialize()
 
-ee_s2 <- ee$ImageCollection("ECMWF/ERA5/DAILY")$
-  filterDate("2016-01-01", "2016-01-31")$
-  filterBounds(nc)
+#####################
+# codigo de teste do pacote
+srtm <- rgee::ee$Image("USGS/SRTMGL1_003")
 
-ee_s2 <- ee$ImageCollection(ee_s2$toList(2))
+viz <- list(
+  max = 4000,
+  min = 0,
+  palette = c("#000000","#5AAD5A","#A9AD84","#FFFFFF")
+)
 
-Map$centerObject(nc$geometry())
-m5 <- Map$addLayers(
-  ee_s2$filterDate("2016-01-03"),
-  visParams
-  )
-m5
-
-visParams <- list(
-  min = 250,
-  max = 320,
-  palette = c('#000080', '#0000D9', '#4000FF', '#8000FF', '#0080FF', '#00FFFF', '#00FF80',
-    '#80FF00', '#DAFF00', '#FFFF00', '#FFF500', '#FFDA00', '#FFB000', '#FFA400',
-    '#FF4F00', '#FF2500', '#FF0A00', '#FF00FF')
-  )
-
+rgee::Map$addLayer(
+  eeObject = srtm,
+  visParams =  viz,
+  name = 'SRTM',
+  # legend = TRUE
+)
+#####################
