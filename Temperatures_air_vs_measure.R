@@ -4,6 +4,7 @@ library(sf)
 
 # Library a usar para earth engine= rgee
 # Guia instalacao - https://github.com/r-spatial/rgee
+# Instalacao gcloud services: https://cloud.google.com/sdk/docs/install
 # Mas da alguns problemas
 # Solucoes para alguns que encontrei:
 #  1 - instalar o google earth engine no conda - https://developers.google.com/earth-engine/guides/python_install-conda#windows_5
