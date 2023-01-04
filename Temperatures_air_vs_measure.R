@@ -80,6 +80,13 @@ temps_ar <- ee$ImageCollection("ECMWF/ERA5/DAILY") %>%
   ee$ImageCollection$map(function(x) x$select("mean_2m_air_temperature")) %>% # Select only precipitation bands
   ee$ImageCollection$toBands() # from imagecollection to image
 
+peniche <- ee$FeatureCollection("FAO/GAUL/2015/level2") %>% 
+  ee$FeatureCollection$select("ADM2NAME") %>% 
+  ee$FeatureCollection$getInfo()
+# Da erro, nao e bem isto
+# https://csaybar.github.io/rgee-examples/#Geometry%2c%20Feature%2c%20FeatureCollection --> investigar
+  
+
 ee_nc_temp <- ee_extract(
     x = temps_ar,
     y = nc["NAME"], #Isto tem de ser alterado depois para o que quero mesmo
