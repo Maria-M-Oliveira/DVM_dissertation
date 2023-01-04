@@ -53,6 +53,7 @@ ee_nc_rain %>%
 # https://developers.google.com/earth-engine/datasets/catalog/USDOS_LSIB_SIMPLE_2017 --> este para pais
 # https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level1#description --> 1º nivel
 # https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level2#description --> 2º nivel
+# Aparentemente, consigo ir as close as Leiria --> ver ficheiro FAO GAUL (excel csv)
 ###
 # Image collection a usar com daily temps:
 # ee.ImageCollection("ECMWF/ERA5/DAILY") 
@@ -61,13 +62,13 @@ ee_nc_rain %>%
 ###
 # Converter temp de  para ºC
 ###
-# Exportar ficheiro temps bc why not
+# Exportar ficheiro temps como csv bc why not, pode dar jeito
 ###
 # Mapear como uma time series as temperaturas a considerar
 
 
 ############
-### Analise temp bss vs temp diarias
+### Analise temp bss vs temp ar diarias
 # Quero graph time series com duas linhas temp
 # Preciso testes estat para comparar os dois - var quantitativas
 
@@ -81,7 +82,7 @@ temps_ar <- ee$ImageCollection("ECMWF/ERA5/DAILY") %>%
 
 ee_nc_temp <- ee_extract(
     x = temps_ar,
-    y = nc["NAME"],
+    y = nc["NAME"], #Isto tem de ser alterado depois para o que quero mesmo
     scale = 250,
     fun = ee$Reducer$mean(),
     sf = TRUE
