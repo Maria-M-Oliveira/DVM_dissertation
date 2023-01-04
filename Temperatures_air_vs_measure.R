@@ -47,6 +47,8 @@ ee_nc_rain %>%
 
 ####################
 # Guia a seguir: https://developers.google.com/earth-engine/tutorials/community/ph-ug-temp
+# https://cran.r-project.org/web/packages/rgee/rgee.pdf
+# https://r-spatial.github.io/rgee/
 ###
 # 1o definir borders, queria so peniche, mas nao vamos ser muito ambiciosos logo portanto definir PT
 # Image collection a usar para definir borders:
@@ -54,6 +56,7 @@ ee_nc_rain %>%
 # https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level1#description --> 1º nivel
 # https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level2#description --> 2º nivel
 # Aparentemente, consigo ir as close as Leiria --> ver ficheiro FAO GAUL (excel csv)
+# https://data.apps.fao.org/catalog/dataset/gaul-codes/resource/cfdaf156-26b9-46c2-aab2-eb437fc16622
 ###
 # Image collection a usar com daily temps:
 # ee.ImageCollection("ECMWF/ERA5/DAILY") 
