@@ -31,3 +31,28 @@ rgee::Map$addLayer(
   # legend = TRUE
 )
 #####################
+
+####################
+# Guia a seguir: https://developers.google.com/earth-engine/tutorials/community/ph-ug-temp
+###
+# 1o definir borders, queria so peniche, mas nao vamos ser muito ambiciosos logo portanto definir PT
+# Image collection a usar para definir borders:
+# https://developers.google.com/earth-engine/datasets/catalog/USDOS_LSIB_SIMPLE_2017
+###
+# Image collection a usar com daily temps:
+# ee.ImageCollection("ECMWF/ERA5/DAILY") 
+# mean_2m_air_temperature (em K, necessario converter em ºC)
+# Necessario definir start time e end, comparar com dados BD
+###
+# Converter temp de  para ºC
+###
+# Exportar ficheiro temps bc why not
+###
+# Mapear como uma time series as temperaturas a considerar
+
+
+############
+### Analise temp bss vs temp diarias
+# Quero graph time series com duas linhas temp
+# Preciso testes estat para comparar os dois - var quantitativas
+
