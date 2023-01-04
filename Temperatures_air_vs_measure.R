@@ -81,11 +81,12 @@ temps_ar <- ee$ImageCollection("ECMWF/ERA5/DAILY") %>%
   ee$ImageCollection$toBands() # from imagecollection to image
 
 peniche <- ee$FeatureCollection("FAO/GAUL/2015/level2") %>% 
-  ee$FeatureCollection$select("ADM2NAME") %>% 
+  ee$FeatureCollection$select("ADM1_NAME", "ADM1_CODE", "Shape_Area", "Shape_Length")$filter("ADM1_NAME"="Leiria") %>% 
   ee$FeatureCollection$getInfo()
 # Da erro, nao e bem isto
 # https://csaybar.github.io/rgee-examples/#Geometry%2c%20Feature%2c%20FeatureCollection --> investigar
-  
+# Tenho de transformar isto num objeto sf para conseguir fazer alguma coisa dele ACHO
+# Mas queria so a infor de leiria,o resto pouco me interessa, how to escolher so leiria
 
 ee_nc_temp <- ee_extract(
     x = temps_ar,
