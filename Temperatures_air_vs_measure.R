@@ -20,7 +20,8 @@ rgee::ee_Initialize()
 #####################
 # codigo de teste do pacote
 
-nc <- st_read("Cont_AAD_CAOP2020", geometry_column = "geometry")
+nc <- st_read("Cont_AAD_CAOP2020", geometry_column = "geometry") %>% 
+  subset(Concelho %in% c("Peniche"))
 
 terraclimate <- ee$ImageCollection("IDAHO_EPSCOR/TERRACLIMATE") %>%
   ee$ImageCollection$filterDate("2001-01-01", "2002-01-01") %>%
@@ -111,11 +112,11 @@ ee_nc_temp <- ee_nc_temp %>%
 # Erro 1: so extraiu ate 09-07-2020 por alguma razao, pensar what do and why
 
 ee_nc_temp %>%
-  ggplot(aes(x = day, y = K, group = NAME, color = K)) +
+  ggplot(aes(x = day, y = K, color = K)) +
   geom_line(alpha = 0.4) +
   xlab("Day") +
   ylab("Temperature (K)") +
   theme_minimal()
-# Funciona, demora bues pq tenho 128500 observacoes pq  nao e so uma localidade
-# Quando substituir por so uma, vai correr mais rapido
-# Point is, funciona
+
+# Funciona assim, mas...
+# Nao percebo nada do grafico que ta aqui
