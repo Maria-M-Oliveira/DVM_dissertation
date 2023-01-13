@@ -20,7 +20,7 @@ rgee::ee_Initialize()
 #####################
 # codigo de teste do pacote
 
-nc <- st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+nc <- st_read("Cont_AAD_CAOP2020", geometry_column = "geometry")
 
 terraclimate <- ee$ImageCollection("IDAHO_EPSCOR/TERRACLIMATE") %>%
   ee$ImageCollection$filterDate("2001-01-01", "2002-01-01") %>%
@@ -96,7 +96,7 @@ peniche <- ee$FeatureCollection("FAO/GAUL/2015/level2") %>%
 
 ee_nc_temp <- ee_extract(
     x = temps_ar,
-    y = nc["NAME"], #Isto tem de ser alterado depois para o que quero mesmo
+    y = nc["geometry"], #Isto tem de ser alterado depois para o que quero mesmo
     scale = 250,
     fun = ee$Reducer$mean(),
     sf = TRUE
