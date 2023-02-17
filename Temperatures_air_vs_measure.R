@@ -5,6 +5,13 @@ library(googledrive)
 library(sf)
 library(tidyverse)
 library(ggplot2)
+library(readxl)
+library(lubridate)
+library(weathermetrics)
+
+#########FILES##########
+product <- read_xlsx("DB_Limpo.xlsx") %>% 
+  rename(Temp= `Temperatura Receção Logística (ºC)`)
 
 
 # Library a usar para earth engine= rgee
@@ -83,8 +90,22 @@ ee_nc_temp %>%
 
 temp_date <- ee_nc_temp %>%  
   st_drop_geometry()
-# transformar coluna day em datas e converter coluna K em celsius
-# uplaod da DB da tese com temperaturas e datas
+
+
+product %>%
+  ggplot(aes(x = Data, y = Temp, color = Temp)) +
+  geom_line(alpha = 0.4) +
+  xlab("Day") +
+  ylab("Temperature (C)") +
+  theme_minimal()
+
+
+temp_date$day <- ymd(temp_date$day)
+
+product$Data <- ymd(product$Data)
+temp_date$Celsius <- kelvin.to.celsius(temp_date$K, round=1)
+
 # juntar as duas com cuidado para ter coluna temp ar e coluna temp produto
 # avaliar correlaçao ? como?
 # time series depois
+
