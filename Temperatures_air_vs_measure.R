@@ -57,7 +57,9 @@ rgee::ee_Initialize()
 
 #####################
 nc <- st_read("Cont_AAD_CAOP2020", geometry_column = "geometry") %>% 
-  subset(Concelho %in% c("Peniche"))
+  subset(Freguesia %in% c("Peniche")) %>% 
+  subset(TAA %in% c("ÁREA PRINCIPAL"))
+
 temps_ar <- ee$ImageCollection("ECMWF/ERA5/DAILY") %>%
   ee$ImageCollection$filterDate("2017-01-02", "2022-02-01") %>%
   ee$ImageCollection$map(function(x) x$select("mean_2m_air_temperature")) %>% # Select only temperature bands
@@ -89,7 +91,8 @@ ee_nc_temp %>%
   theme_minimal()
 
 temp_date <- ee_nc_temp %>%  
-  st_drop_geometry()
+  st_drop_geometry() %>% 
+  unique()
 
 
 product %>%
@@ -104,6 +107,18 @@ temp_date$day <- ymd(temp_date$day)
 
 product$Data <- ymd(product$Data)
 temp_date$Celsius <- kelvin.to.celsius(temp_date$K, round=1)
+
+temp_date %>%
+  ggplot(aes(x = day, y = Celsius, color = Celsius)) +
+  geom_line(alpha = 0.4) +
+  xlab("Day") +
+  ylab("Temperature (ºC)") +
+  theme_minimal()
+
+Air_product <- merge(product, temp_date, by.x="Data", by.y="day") %>% 
+  group_by(Data) %>% 
+  subset(select = c(Data, Temp, Celsius))
+  
 
 # juntar as duas com cuidado para ter coluna temp ar e coluna temp produto
 # avaliar correlaçao ? como?
