@@ -8,6 +8,7 @@ library(ggplot2)
 library(readxl)
 library(lubridate)
 library(weathermetrics)
+library(dlnm)
 
 #########FILES##########
 product <- read_xlsx("DB_Limpo.xlsx") %>% 
@@ -133,16 +134,19 @@ Air_product %>%
   ggplot(aes(x=day)) +
   geom_line(aes(y=Celsius, colour="Air")) +
   geom_line(aes(y=Temp, colour="Product"))
-  
 
-# time series depois
 
 Air_sem_NA <- Air_product %>% drop_na()
-
-# First, i should remove the outliers in the product variable and only then can i carry on the analysis
 
 ks.test(Air_sem_NA$Temp, "pnorm") #p<2.2e-16, not normal
 ks.test(Air_sem_NA$Celsius, "pnorm") #p<2.2e-16, not normal
 
 corre <- cor(Air_sem_NA$Temp, Air_sem_NA$Celsius, method="spearman")
 corre #0.205 
+
+# time series depois
+mts <- ts(Air_sem_NA, start = decimal_date(ymd("2017-01-02")),
+          frequency = 365.25 / 7)
+
+plot(mts)
+     
