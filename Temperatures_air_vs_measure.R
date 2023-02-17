@@ -15,6 +15,16 @@ product <- read_xlsx("DB_Limpo.xlsx") %>%
   rename(day=Data)
 
 
+########Data cleaning###########
+boxplot(product$Temp) # a lot of outliers
+
+quartiles <- quantile(product$Temp, probs=c(.25,.75),na.rm=FALSE)
+IQR <- IQR(product$Temp)
+
+Lower <- quartiles[1] - 1.5*IQR
+Upper <- quartiles[2] +1.5*IQR
+
+product_clean <- subset(product, product$Temp>Lower & product$Temp<Upper)
 # Library a usar para earth engine= rgee
 # Guia instalacao - https://github.com/r-spatial/rgee
 # Instalacao gcloud services: https://cloud.google.com/sdk/docs/install
@@ -94,8 +104,9 @@ ee_nc_temp %>%
 temp_date <- ee_nc_temp %>%  
   st_drop_geometry()
 
+boxplot(temp_date$Celsius) #no outliers
 
-product %>%
+product_clean %>%
   ggplot(aes(x = Data, y = Temp, color = Temp)) +
   geom_line(alpha = 0.4) +
   xlab("Day") +
@@ -105,7 +116,7 @@ product %>%
 
 temp_date$day <- ymd(temp_date$day)
 
-product$Data <- ymd(product$day)
+product_clean$Data <- ymd(product_clean$day)
 temp_date$Celsius <- kelvin.to.celsius(temp_date$K, round=1)
 
 temp_date %>%
@@ -115,7 +126,7 @@ temp_date %>%
   ylab("Temperature (ºC)") +
   theme_minimal()
 
-Air_product <- left_join(product, temp_date) %>% 
+Air_product <- left_join(product_clean, temp_date) %>% 
   subset(select = c(day, Temp, Celsius))
 
 Air_product %>% 
@@ -128,7 +139,6 @@ Air_product %>%
 
 Air_sem_NA <- Air_product %>% drop_na()
 
-boxplot(Air_sem_NA$Temp, Air_sem_NA$Celsius) #outliers in product temps
 # First, i should remove the outliers in the product variable and only then can i carry on the analysis
 
 ks.test(Air_sem_NA$Temp, "pnorm") #p<2.2e-16, not normal
