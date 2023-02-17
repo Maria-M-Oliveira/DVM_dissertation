@@ -124,7 +124,15 @@ Air_product %>%
   geom_line(aes(y=Temp, colour="Product"))
   
 
-# juntar as duas com cuidado para ter coluna temp ar e coluna temp produto
-# avaliar correlaçao ? como?
 # time series depois
 
+Air_sem_NA <- Air_product %>% drop_na()
+
+boxplot(Air_sem_NA$Temp, Air_sem_NA$Celsius) #outliers in product temps
+# First, i should remove the outliers in the product variable and only then can i carry on the analysis
+
+ks.test(Air_sem_NA$Temp, "pnorm") #p<2.2e-16, not normal
+ks.test(Air_sem_NA$Celsius, "pnorm") #p<2.2e-16, not normal
+
+corre <- cor(Air_sem_NA$Temp, Air_sem_NA$Celsius, method="spearman")
+corre #0.205 
