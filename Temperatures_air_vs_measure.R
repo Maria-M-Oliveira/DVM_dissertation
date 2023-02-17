@@ -11,7 +11,8 @@ library(weathermetrics)
 
 #########FILES##########
 product <- read_xlsx("DB_Limpo.xlsx") %>% 
-  rename(Temp= `Temperatura Receção Logística (ºC)`)
+  rename(Temp= `Temperatura Receção Logística (ºC)`) %>% 
+  rename(day=Data)
 
 
 # Library a usar para earth engine= rgee
@@ -85,14 +86,13 @@ ee_nc_temp <- ee_nc_temp %>%
 
 ee_nc_temp %>%
   ggplot(aes(x = day, y = K, color = K)) +
-  geom_line(alpha = 0.4) +
+  geom_line(alpha = 0.4, group=1) +
   xlab("Day") +
   ylab("Temperature (K)") +
   theme_minimal()
 
 temp_date <- ee_nc_temp %>%  
-  st_drop_geometry() %>% 
-  unique()
+  st_drop_geometry()
 
 
 product %>%
@@ -105,7 +105,7 @@ product %>%
 
 temp_date$day <- ymd(temp_date$day)
 
-product$Data <- ymd(product$Data)
+product$Data <- ymd(product$day)
 temp_date$Celsius <- kelvin.to.celsius(temp_date$K, round=1)
 
 temp_date %>%
@@ -115,9 +115,13 @@ temp_date %>%
   ylab("Temperature (ºC)") +
   theme_minimal()
 
-Air_product <- merge(product, temp_date, by.x="Data", by.y="day") %>% 
-  group_by(Data) %>% 
-  subset(select = c(Data, Temp, Celsius))
+Air_product <- left_join(product, temp_date) %>% 
+  subset(select = c(day, Temp, Celsius))
+
+Air_product %>% 
+  ggplot(aes(x=day)) +
+  geom_line(aes(y=Celsius, colour="Air")) +
+  geom_line(aes(y=Temp, colour="Product"))
   
 
 # juntar as duas com cuidado para ter coluna temp ar e coluna temp produto
