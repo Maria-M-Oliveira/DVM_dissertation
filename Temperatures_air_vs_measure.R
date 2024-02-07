@@ -12,7 +12,7 @@ library(dlnm)
 
 #########FILES##########
 product <- read_xlsx("DB_Limpo.xlsx") %>% 
-  rename(Temp= `Temperatura ReceÁ„o LogÌstica (∫C)`) %>% 
+  rename(Temp= `Temperatura Rece??o Log?stica (?C)`) %>% 
   rename(day=Data)
 
 
@@ -44,17 +44,17 @@ product_clean <- subset(product, product$Temp>Lower & product$Temp<Upper)
 # 1o definir borders, queria so peniche, mas nao vamos ser muito ambiciosos logo portanto definir PT
 # Image collection a usar para definir borders:
 # https://developers.google.com/earth-engine/datasets/catalog/USDOS_LSIB_SIMPLE_2017 --> este para pais
-# https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level1#description --> 1∫ nivel
-# https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level2#description --> 2∫ nivel
+# https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level1#description --> 1? nivel
+# https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level2#description --> 2? nivel
 # Aparentemente, consigo ir as close as Leiria --> ver ficheiro FAO GAUL (excel csv)
 # https://data.apps.fao.org/catalog/dataset/gaul-codes/resource/cfdaf156-26b9-46c2-aab2-eb437fc16622
 ###
 # Image collection a usar com daily temps:
 # ee.ImageCollection("ECMWF/ERA5/DAILY") 
-# mean_2m_air_temperature (em K, necessario converter em ∫C)
+# mean_2m_air_temperature (em K, necessario converter em ?C)
 # Necessario definir start time e end, comparar com dados BD
 ###
-# Converter temp de  para ∫C
+# Converter temp de  para ?C
 ###
 # Mapear como uma time series as temperaturas a considerar
 
@@ -70,8 +70,10 @@ rgee::ee_Initialize()
 #####################
 nc <- st_read("Cont_AAD_CAOP2020", geometry_column = "geometry") %>% 
   subset(Freguesia %in% c("Peniche")) %>% 
-  subset(TAA %in% c("¡REA PRINCIPAL"))
+  subset(TAA %in% c("?REA PRINCIPAL"))
 
+# Tenho de testar com este: ECMWF/ERA5_LAND/DAILY_AGGR 
+# O que est√° agora tem dados s√≥ ate 2020
 temps_ar <- ee$ImageCollection("ECMWF/ERA5/DAILY") %>%
   ee$ImageCollection$filterDate("2017-01-02", "2022-02-01") %>%
   ee$ImageCollection$map(function(x) x$select("mean_2m_air_temperature")) %>% # Select only temperature bands
@@ -124,7 +126,7 @@ temp_date %>%
   ggplot(aes(x = day, y = Celsius, color = Celsius)) +
   geom_line(alpha = 0.4) +
   xlab("Day") +
-  ylab("Temperature (∫C)") +
+  ylab("Temperature (?C)") +
   theme_minimal()
 
 Air_product <- left_join(product_clean, temp_date) %>% 
