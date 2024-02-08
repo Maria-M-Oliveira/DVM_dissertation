@@ -12,7 +12,7 @@ library(dlnm)
 
 #########FILES##########
 product <- read_xlsx("DB_Limpo.xlsx") %>% 
-  rename(Temp= `Temperatura Rece??o Log?stica (?C)`) %>% 
+  rename(Temp= `Temperatura Receção Logística (ºC)`) %>% 
   rename(day=Data)
 
 
@@ -65,7 +65,17 @@ product_clean <- subset(product, product$Temp>Lower & product$Temp<Upper)
 
 #############
 # Inicio do codigo a serio
-rgee::ee_Initialize()
+ee$Authenticate(auth_mode='notebook')
+
+# Initialize - this will connect to a project. You should always call this
+# before working with rgee. It is IMPORTANT THAT YOU SPECIFY A PROJECT using
+# the project parameter. If you forget what project IDs you have access to, find them
+# here: console.cloud.google.com/project
+ee$Initialize(project='ee-my-username-dlnm')  # <-- EDIT THIS FOR YOUR PROJECT
+
+# Optionally make a request to verify you are connected.
+ee$String('Hello from the Earth Engine servers!')$getInfo()
+# rgee::ee_Initialize()
 
 #####################
 nc <- st_read("Cont_AAD_CAOP2020", geometry_column = "geometry") %>% 
