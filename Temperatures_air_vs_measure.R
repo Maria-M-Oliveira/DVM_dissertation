@@ -7,7 +7,7 @@ library(tidyverse)
 library(ggplot2)
 library(readxl)
 library(lubridate)
-library(weathermetrics)
+# library(weathermetrics)
 library(dlnm)
 
 #########FILES##########
